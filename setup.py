@@ -1,0 +1,30 @@
+from setuptools import setup
+
+VERSION = "1.14.3"
+
+setup(
+    name="builder",
+    version=VERSION,
+    license="Apache License 2.0",
+    author="The Open Peer Power Authors",
+    author_email="hello@open-peer-power.io",
+    url="https://open-peer-power.io/",
+    description="Opp.io wheels builder form Open Peer Power.",
+    long_description="",
+    classifiers=[
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Home Automation"
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Scientific/Engineering :: Atmospheric Science",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3.7",
+    ],
+    keywords=["docker", "open-peer-power", "opp.io"],
+    zip_safe=False,
+    platforms="any",
+    packages=["builder", "builder.upload"],
+    include_package_data=True,
+)
