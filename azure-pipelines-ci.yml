@@ -1,4 +1,4 @@
-# https://dev.azure.com/open-peer-power
+# https://dev.azure.com/openpeerpower
 
 trigger:
   batch: true

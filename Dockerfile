@@ -28,7 +28,7 @@ RUN apk add --no-cache \
         rsync \
         openssh-client \
     && pip3 install --no-cache-dir --find-links \
-        "https://wheels.open-peer-power.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
+        "https://wheels.openpeerpower.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
         -r /usr/src/requirements.txt \
     && rm -f /usr/src/requirements.txt
 
