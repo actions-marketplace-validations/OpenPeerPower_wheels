@@ -6,10 +6,10 @@
 
 $ python3 -m builder \
     --apk build-base \
-    --index https://wheels.openpeerpower.io \
+    --index https://wheels.australiaeast.cloudapp.azure.com \
     --requirement requirements_all.txt \
     --upload rsync \
-    --remote user@server:/wheels
+    --remote pcaston@server:/wheels
 ```
 
 ## Supported file transfer
