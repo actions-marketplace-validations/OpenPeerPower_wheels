@@ -10,7 +10,7 @@ trigger:
 pr: none
 variables:
   - name: versionBuilder
-    value: "4.4"
+    value: "1.0"
   - group: docker
 resources:
   repositories:
