@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/openpeerpower/Opp.io/_apis/build/status/wheels?branchName=master)](https://dev.azure.com/openpeerpower/Opp.io/_build/latest?definitionId=11&branchName=master)
+[![Build Status](https://dev.azure.com/openpeerpower/Opp.io/_apis/build/status/wheels?branchName=main)](https://dev.azure.com/openpeerpower/Opp.io/_build/latest?definitionId=11&branchName=main)
 
 # Opp.io Wheels builder
 

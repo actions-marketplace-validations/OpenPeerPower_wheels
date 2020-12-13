@@ -4,9 +4,9 @@ trigger:
   batch: true
   branches:
     include:
-      - master
+      - main
 pr:
-  - master
+  - main
 variables:
   - name: versionHadolint
     value: "v1.16.3"

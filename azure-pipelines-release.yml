@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-      - master
+      - main
   tags:
     include:
       - "*"
@@ -48,7 +48,7 @@ stages:
           - script: sudo docker pull openpeerpower/amd64-builder:$(versionBuilder)
             displayName: "Install Builder"
           - script: |
-              if [ "$(Build.SourceBranchName)" == "master" ]; then
+              if [ "$(Build.SourceBranchName)" == "main" ]; then
                 version="dev"
               else
                 version="$(Build.SourceBranchName)"
