@@ -33,9 +33,6 @@ stages:
           vmImage: "ubuntu-latest"
         strategy:
           matrix:
-            38-Alpine311:
-              buildPython: "3.8-alpine3.11"
-              buildArgs: ""
             38-Alpine312:
               buildPython: "3.8-alpine3.12"
               buildArgs: "--release-tag"
