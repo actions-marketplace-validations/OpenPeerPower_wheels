@@ -43,7 +43,7 @@ stages:
             displayName: "Install Builder"
           - script: |
               if [ "$(Build.SourceBranchName)" == "main" ]; then
-                version="dev"
+                version="main"
               else
                 version="$(Build.SourceBranchName)"
               fi
