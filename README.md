@@ -1,21 +1,15 @@
-[![Build Status](https://dev.azure.com/openpeerpower/Opp.io/_apis/build/status/wheels?branchName=main)](https://dev.azure.com/openpeerpower/Opp.io/_build/latest?definitionId=11&branchName=main)
+---
+title: "Wheels"
+description: "List of pre-built-wheels."
+sidebar: false
+is_homepage: true
+hide_github_edit: true
+body_id: wheels-page
+regenerate: false
+---
 
-# Opp.io Wheels builder edited added pipeline
 
-```sh
-
-$ python3 -m builder \
-    --apk build-base \
-    --index https://wheels.australiaeast.cloudapp.azure.com \
-    --requirement requirements_all.txt \
-    --upload rsync \
-    --remote pcaston@server:/wheels
-```
-
-## Supported file transfer
-
-- rsync
-
-## Folder structure of index folder:
-
-`/alpine-{version}/{arch}/*`
+{% assign whl_files = site.static_files | where: "wheel", true %}
+{% for mywhl in whl_files %}
+  {{ mywhl.path }}
+{% endfor %}
