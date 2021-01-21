@@ -23,7 +23,7 @@ from builder.pip import (
     install_pips,
     write_requirement,
 )
-from builder.upload import run_upload
+from builder.upload.indexer import whlindex
 from builder.utils import check_url
 from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwheel
 
@@ -31,7 +31,6 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 @click.command("builder")
 @click.option("--apk", default="build-base", help="APKs they are needed to build this.")
 @click.option("--pip", default="Cython", help="PiPy modules needed to build this.")
-@click.option("--index", required=True, help="Index URL of remote wheels repository.")
 @click.option(
     "--skip-binary", default=":none:", help="List of packages to skip wheels from pypi."
 )
@@ -73,17 +72,37 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 @click.option(
     "--test", is_flag=True, default=False, help="Test building wheels, no upload."
 )
-@click.option("--upload", default="rsync", help="Upload plugin to upload wheels.")
 @click.option(
-    "--remote", required=True, type=str, help="Remote URL pass to upload plugin."
+    "--repo-url", required=True, type=str, help="The repository URL where the Python package officially lives. It should start with \"https://\".\""
+)
+@click.option(
+    "--github-token", required=True, type=str, help="GitHub token to use for pushing to the index repository."
+)
+@click.option(
+    "--index-name", required=True, type=str, help="Index repository name on GitHub, e.g. \"openpeerpower/python-package-server/.\""
+)
+@click.option(
+    "--signature", required=True, type=str, help="Git signature for the index repository, in the standard format Full Name <email@com>"
+)
+@click.option(
+    "--repo-tag", required=True, type=str, help="The tag to publish, which must match the version in setup.py; this is a safety check."
 )
 @click.option(
     "--timeout", default=345, type=int, help="Max runtime for pip before abort."
 )
+@click.option(
+    "--target-branch", default="main", type=str, help="The Git branch in the index repo to which to publish the package."
+)
+@click.option(
+    "--target-dir", default="docs", type=str, help="Path in the index repository that is the PyPi root. We are assuming GitHub Pages by default."
+)
+@click.option(
+    "--do-not-push", default="", type=str, help="Do not push to the index repo. Set this to whatever to activate this option."
+)
+
 def builder(
     apk: str,
     pip: str,
-    index: str,
     skip_binary: str,
     requirement: Optional[Path],
     requirement_diff: Optional[Path],
@@ -93,20 +112,27 @@ def builder(
     auditwheel: bool,
     local: bool,
     test: bool,
-    upload: str,
-    remote: str,
+    repo_url: str,
+    github_token: str,
+    index_name: str,
+    signature: str,
+    repo_tag: str,
     timeout: int,
+    target_branch: str,
+    target_dir: str,
+    do_not_push: str
 ):
     """Build wheels precompiled for Open Peer Power container."""
     install_apks(apk)
-    check_url(index)
+    check_url(index_name)
 
     exit_code = 0
     with TemporaryDirectory() as temp_dir:
         output = Path(temp_dir)
+        output = "/tmp/wheelhouse"
 
         wheels_dir = create_wheels_folder(output)
-        wheels_index = create_wheels_index(index)
+        wheels_index = create_wheels_index(index_name)
 
         # Setup build helper
         install_pips(wheels_index, pip)
@@ -116,7 +142,7 @@ def builder(
             # Build wheels in a local folder/src
             build_wheels_local(wheels_index, wheels_dir)
         elif prebuild_dir:
-            # Prepare allready builded wheels for upload
+            # Prepare built wheels for upload
             for whl_file in prebuild_dir.glob("*.whl"):
                 shutil.copy(whl_file, Path(wheels_dir, whl_file.name))
         elif single:
@@ -166,7 +192,7 @@ def builder(
 
         fix_wheels_name(wheels_dir)
         if not test:
-            run_upload(upload, output, remote)
+            whlindex(github_token, index_name, signature, repo_url, repo_tag, output, target_branch, target_dir)
 
     sys.exit(exit_code)
 

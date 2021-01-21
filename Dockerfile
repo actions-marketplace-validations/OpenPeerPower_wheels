@@ -19,13 +19,11 @@ RUN apk add --no-cache --virtual .build-dependencies \
     && ./configure \
     && make "-j$(nproc)" \
     && make install \
-    && apk del .build-dependencies \
     && rm -rf /usr/src/patchelf
 
 # Install requirements
 COPY requirements.txt /usr/src/
 RUN apk add --no-cache \
-        rsync \
         openssh-client \
     && pip3 install --no-cache-dir --find-links \
         "https://wheels.openpeerpower.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \

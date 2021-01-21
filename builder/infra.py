@@ -23,13 +23,13 @@ def create_wheels_index(base_index: str) -> str:
     return f"{base_index}/{alpine_version()}/{build_arch()}/"
 
 
-def check_available_binary(index: str, skip_binary: str, packages: List[str]) -> str:
+def check_available_binary(index_name: str, skip_binary: str, packages: List[str]) -> str:
     """Check if binary exists and ignore this skip."""
     if skip_binary == ":none:":
         return skip_binary
 
     list_binary = skip_binary.split(",")
-    available_data = requests.get(index, allow_redirects=True).text
+    available_data = requests.get(index_name, allow_redirects=True).text
 
     list_needed: Set[str] = set()
     for binary in list_binary:
