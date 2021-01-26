@@ -1,13 +1,20 @@
 """Opp.io Builder main application."""
+import os
 from pathlib import Path
 import shutil
+import re
+import subprocess
 from subprocess import CalledProcessError, TimeoutExpired
 import sys
 from tempfile import TemporaryDirectory
 from typing import Optional
+from functools import partial
+from email.utils import parseaddr
+
 
 import click
 import click_pathlib
+
 
 from builder.apk import install_apks
 from builder.infra import (
@@ -23,7 +30,6 @@ from builder.pip import (
     install_pips,
     write_requirement,
 )
-from builder.upload.indexer import whlindex
 from builder.utils import check_url
 from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwheel
 
@@ -73,31 +79,21 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
     "--test", is_flag=True, default=False, help="Test building wheels, no upload."
 )
 @click.option(
-    "--repo-url", required=True, type=str, help="The repository URL where the Python package officially lives. It should start with \"https://\".\""
+    "--github-token",
+    required=True, type=str, help="GitHub token to use for pushing to the index repository."
 )
 @click.option(
-    "--github-token", required=True, type=str, help="GitHub token to use for pushing to the index repository."
+    "--index-name",
+    required=True,
+    type=str, help="Index repository name on GitHub, e.g. \"openpeerpower/python-package-server/.\""
 )
 @click.option(
-    "--index-name", required=True, type=str, help="Index repository name on GitHub, e.g. \"openpeerpower/python-package-server/.\""
-)
-@click.option(
-    "--signature", required=True, type=str, help="Git signature for the index repository, in the standard format Full Name <email@com>"
-)
-@click.option(
-    "--repo-tag", required=True, type=str, help="The tag to publish, which must match the version in setup.py; this is a safety check."
+    "--signature",
+    required=True,
+    type=str, help="Git signature for the index repository, in the standard format Full Name <email@com>"
 )
 @click.option(
     "--timeout", default=345, type=int, help="Max runtime for pip before abort."
-)
-@click.option(
-    "--target-branch", default="main", type=str, help="The Git branch in the index repo to which to publish the package."
-)
-@click.option(
-    "--target-dir", default="docs", type=str, help="Path in the index repository that is the PyPi root. We are assuming GitHub Pages by default."
-)
-@click.option(
-    "--do-not-push", default="", type=str, help="Do not push to the index repo. Set this to whatever to activate this option."
 )
 
 def builder(
@@ -112,25 +108,24 @@ def builder(
     auditwheel: bool,
     local: bool,
     test: bool,
-    repo_url: str,
     github_token: str,
     index_name: str,
     signature: str,
-    repo_tag: str,
-    timeout: int,
-    target_branch: str,
-    target_dir: str,
-    do_not_push: str
+    timeout: int
 ):
     """Build wheels precompiled for Open Peer Power container."""
     install_apks(apk)
-    check_url(index_name)
 
     exit_code = 0
-    with TemporaryDirectory() as temp_dir:
-        output = Path(temp_dir)
-        output = "/tmp/wheelhouse"
-
+    with TemporaryDirectory() as index_dir:
+        signature = "Paul Caston <paul@caston.id.au>"
+        github_token = "b16d1b9dbbddbcb2501ef881c3110d580e4416cf"
+        index_name = "OpenPeerPower/whl-ix"
+        target_branch = "main"
+        output = Path(index_dir)
+        shell = partial(secure_shell, github_token)
+        shell("git", "clone", "--branch=main", "--depth=1",
+              "https://%s@github.com/%s.git" % (github_token, index_name), index_dir)
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index(index_name)
 
@@ -192,10 +187,19 @@ def builder(
 
         fix_wheels_name(wheels_dir)
         if not test:
-            whlindex(github_token, index_name, signature, repo_url, repo_tag, output, target_branch, target_dir)
+            # Publish the new version
+            name, email = parseaddr(signature)
+            shell("git", "config", "user.name", name)
+            shell("git", "config", "user.email", email)
+
+            shell("git", "add", "-A")
+            shell("git", "commit", "-sm", "Update index")
+            shell("git", "push", "origin", "main:main")
 
     sys.exit(exit_code)
-
+def secure_shell(github_token, *args):
+    print(" ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args]))
+    subprocess.run(args, check=True)
 
 if __name__ == "__main__":
     builder()  # pylint: disable=no-value-for-parameter
