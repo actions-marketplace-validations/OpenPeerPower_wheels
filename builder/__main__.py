@@ -118,16 +118,12 @@ def builder(
 
     exit_code = 0
     with TemporaryDirectory() as index_dir:
-        signature = "Paul Caston <paul@caston.id.au>"
-        github_token = "b16d1b9dbbddbcb2501ef881c3110d580e4416cf"
-        index_name = "OpenPeerPower/whl-ix"
-        target_branch = "main"
         output = Path(index_dir)
         shell = partial(secure_shell, github_token)
         shell("git", "clone", "--branch=main", "--depth=1",
               "https://%s@github.com/%s.git" % (github_token, index_name), index_dir)
         wheels_dir = create_wheels_folder(output)
-        wheels_index = create_wheels_index(index_name)
+        wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
 
         # Setup build helper
         install_pips(wheels_index, pip)
@@ -187,7 +183,10 @@ def builder(
 
         fix_wheels_name(wheels_dir)
         if not test:
+            # Recreate the indices
+            make_tree(index_dir + "/docs")
             # Publish the new version
+            os.chdir(index_dir)
             name, email = parseaddr(signature)
             shell("git", "config", "user.name", name)
             shell("git", "config", "user.email", email)
@@ -198,8 +197,40 @@ def builder(
 
     sys.exit(exit_code)
 def secure_shell(github_token, *args):
+    ''' execute git commands in a sub process '''
     print(" ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args]))
     subprocess.run(args, check=True)
+
+def make_tree(path):
+    ''' Recreate index,html files '''
+    html1 = """<!DOCTYPE html>
+<html>
+    """
+    for root, dirs, files in os.walk(path):
+        path = root.split(os.sep)
+        print((len(path) - 1) * '---', os.path.basename(root))
+        doc = html1 + """<head><title>Index of /{0}/</title></head>
+    <body bgcolor="white">
+        <h1>Index of /{0}/</h1><pre><a href="../">../</a>
+        """.format(os.path.basename(root))
+        for dir in dirs:
+            doc = doc + """
+            <a href={0}/>{0}/</a>""".format(dir)
+        for file in files:
+            if file != "index.html":
+                print(len(path) * '---', file)
+                doc = doc + """
+            <a href={0}>{0}</a>""".format(file)
+        doc = doc + """
+    </pre><hr></body>
+</html>
+        """
+        index_file = Path(root + "/index.html")
+        ##if not index_file.exists():
+        ##   index_file.parent.mkdir(parents=True)
+        with open(index_file, "w") as f:
+            f.write(doc)
+            f.close
 
 if __name__ == "__main__":
     builder()  # pylint: disable=no-value-for-parameter

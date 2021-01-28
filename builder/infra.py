@@ -12,7 +12,7 @@ _RE_REQUIREMENT = re.compile(r"(?P<package>.+)(?:==|>|<|<=|>=|~=)(?P<version>.+)
 
 def create_wheels_folder(base_folder: Path) -> Path:
     """Create index structure."""
-    wheels_dir = Path(base_folder, alpine_version(), build_arch())
+    wheels_dir = Path(base_folder, "docs", alpine_version(), build_arch())
 
     wheels_dir.mkdir(parents=True, exist_ok=True)
     return wheels_dir
