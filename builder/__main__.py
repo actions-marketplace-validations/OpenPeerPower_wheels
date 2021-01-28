@@ -208,17 +208,15 @@ def make_tree(path):
     """
     for root, dirs, files in os.walk(path):
         path = root.split(os.sep)
-        print((len(path) - 1) * '---', os.path.basename(root))
         doc = html1 + """<head><title>Index of /{0}/</title></head>
     <body bgcolor="white">
         <h1>Index of /{0}/</h1><pre><a href="../">../</a>
         """.format(os.path.basename(root))
-        for dir in dirs:
+        for dirname in dirs:
             doc = doc + """
-            <a href={0}/>{0}/</a>""".format(dir)
+            <a href={0}/>{0}/</a>""".format(dirname)
         for file in files:
             if file != "index.html":
-                print(len(path) * '---', file)
                 doc = doc + """
             <a href={0}>{0}</a>""".format(file)
         doc = doc + """
