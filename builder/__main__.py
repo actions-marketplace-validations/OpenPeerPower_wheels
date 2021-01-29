@@ -58,7 +58,7 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 @click.option(
     "--prebuild-dir",
     type=click_pathlib.Path(exists=True),
-    help="Folder with include allready builded wheels for upload.",
+    help="Folder with already built wheels for upload.",
 )
 @click.option(
     "--single",
