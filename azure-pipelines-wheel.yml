@@ -24,7 +24,7 @@ stages:
       - template: templates/azp-job-wheels.yaml@azure
         parameters:
           jobName: "Wheels_38_Alpine312"
-          builderVersion: "dev-3.8-alpine3.12"
+          builderVersion: "1.0.2-3.8-alpine3.12"
           builderApk: "build-base;libffi-dev;openssl-dev"
           wheelsRequirement: "requirements_all.txt"
           preBuild:
