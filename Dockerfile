@@ -26,10 +26,10 @@ COPY requirements.txt /usr/src/
 RUN apk add --no-cache \
         openssh-client \
     && pip3 install --no-cache-dir --find-links \
-        "https://wheels.openpeerpower.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
+        "https://openpeerpower.io/whl-ix/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
         pip==21.0 \
     && pip3 install --no-cache-dir --find-links \
-        "https://wheels.openpeerpower.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
+        "https://openpeerpower.io/whl-ix/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
         -r /usr/src/requirements.txt \
     && rm -f /usr/src/requirements.txt
 
