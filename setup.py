@@ -25,6 +25,6 @@ setup(
     keywords=["docker", "openpeerpower", "opp.io"],
     zip_safe=False,
     platforms="any",
-    packages=["builder", "builder.upload"],
+    packages=["builder"],
     include_package_data=True,
 )
