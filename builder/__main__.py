@@ -1,20 +1,14 @@
 """Opp.io Builder main application."""
-import os
 from pathlib import Path
 import shutil
-import re
-import subprocess
 from subprocess import CalledProcessError, TimeoutExpired
 import sys
 from tempfile import TemporaryDirectory
 from typing import Optional
-from functools import partial
-from email.utils import parseaddr
 
-
+from awesomeversion import AwesomeVersion
 import click
 import click_pathlib
-
 
 from builder.apk import install_apks
 from builder.infra import (
@@ -30,13 +24,18 @@ from builder.pip import (
     install_pips,
     write_requirement,
 )
+from builder.filter import filter_requirements
+from builder.upload import run_upload
 from builder.utils import check_url
 from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwheel
 
 
 @click.command("builder")
 @click.option("--apk", default="build-base", help="APKs they are needed to build this.")
+@click.option("--tag", default="", help="The tag used.")
+@click.option("--arch", default="amd64", help="The architecture we build for.")
 @click.option("--pip", default="Cython", help="PiPy modules needed to build this.")
+@click.option("--index", required=True, help="Index URL of remote wheels repository.")
 @click.option(
     "--skip-binary", default=":none:", help="List of packages to skip wheels from pypi."
 )
@@ -58,7 +57,7 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 @click.option(
     "--prebuild-dir",
     type=click_pathlib.Path(exists=True),
-    help="Folder with already built wheels for upload.",
+    help="Folder with include allready builded wheels for upload.",
 )
 @click.option(
     "--single",
@@ -78,27 +77,17 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 @click.option(
     "--test", is_flag=True, default=False, help="Test building wheels, no upload."
 )
+@click.option("--upload", default="rsync", help="Upload plugin to upload wheels.")
 @click.option(
-    "--github-token",
-    required=True, type=str, help="GitHub token to use for pushing to the index repository."
-)
-@click.option(
-    "--index-name",
-    required=True,
-    type=str, help="Index repository name on GitHub, e.g. \"openpeerpower/python-package-server/.\""
-)
-@click.option(
-    "--signature",
-    required=True,
-    type=str, help="Git signature for the index repository, in the standard format Full Name <email@com>"
+    "--remote", required=True, type=str, help="Remote URL pass to upload plugin."
 )
 @click.option(
     "--timeout", default=345, type=int, help="Max runtime for pip before abort."
 )
-
 def builder(
     apk: str,
     pip: str,
+    index: str,
     skip_binary: str,
     requirement: Optional[Path],
     requirement_diff: Optional[Path],
@@ -108,22 +97,27 @@ def builder(
     auditwheel: bool,
     local: bool,
     test: bool,
-    github_token: str,
-    index_name: str,
-    signature: str,
-    timeout: int
+    upload: str,
+    tag: str,
+    arch: str,
+    remote: str,
+    timeout: int,
 ):
     """Build wheels precompiled for Open Peer Power container."""
     install_apks(apk)
+    check_url(index)
+
+    alpine_version = AwesomeVersion(tag.split("alpine")[-1])
 
     exit_code = 0
-    with TemporaryDirectory() as index_dir:
-        output = Path(index_dir)
-        shell = partial(secure_shell, github_token)
-        shell("git", "clone", "--branch=main", "--depth=1",
-              "https://%s@github.com/%s.git" % (github_token, index_name), index_dir)
+    with TemporaryDirectory() as temp_dir:
+        output = Path(temp_dir)
+
         wheels_dir = create_wheels_folder(output)
-        wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
+        wheels_index = create_wheels_index(index)
+
+        # Filter requirements
+        filter_requirements(requirement, arch)
 
         # Setup build helper
         install_pips(wheels_index, pip)
@@ -131,9 +125,9 @@ def builder(
 
         if local:
             # Build wheels in a local folder/src
-            build_wheels_local(wheels_index, wheels_dir)
+            build_wheels_local(wheels_index, wheels_dir, alpine_version)
         elif prebuild_dir:
-            # Prepare built wheels for upload
+            # Prepare allready builded wheels for upload
             for whl_file in prebuild_dir.glob("*.whl"):
                 shutil.copy(whl_file, Path(wheels_dir, whl_file.name))
         elif single:
@@ -149,6 +143,7 @@ def builder(
                         wheels_dir,
                         skip_binary,
                         timeout,
+                        alpine_version,
                         constraint,
                     )
                 except CalledProcessError:
@@ -170,6 +165,7 @@ def builder(
                     wheels_dir,
                     skip_binary,
                     timeout,
+                    alpine_version,
                     constraint,
                 )
             except CalledProcessError:
@@ -183,52 +179,10 @@ def builder(
 
         fix_wheels_name(wheels_dir)
         if not test:
-            # Recreate the indices
-            make_tree(index_dir + "/docs")
-            # Publish the new version
-            os.chdir(index_dir)
-            name, email = parseaddr(signature)
-            shell("git", "config", "user.name", name)
-            shell("git", "config", "user.email", email)
-
-            shell("git", "add", "-A")
-            shell("git", "commit", "-sm", "Update index")
-            shell("git", "push", "origin", "main:main")
+            run_upload(upload, output, remote)
 
     sys.exit(exit_code)
-def secure_shell(github_token, *args):
-    ''' execute git commands in a sub process '''
-    print(" ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args]))
-    subprocess.run(args, check=True)
 
-def make_tree(path):
-    ''' Recreate index,html files '''
-    html1 = """<!DOCTYPE html>
-<html>
-    """
-    for root, dirs, files in os.walk(path):
-        path = root.split(os.sep)
-        doc = html1 + """<head><title>Index of /{0}/</title></head>
-    <body bgcolor="white">
-        <h1>Index of /{0}/</h1><pre><a href="../">../</a>
-        """.format(os.path.basename(root))
-        for dirname in dirs:
-            doc = doc + """
-            <a href={0}/>{0}/</a>""".format(dirname)
-        for file in files:
-            if file != "index.html":
-                doc = doc + """
-            <a href={0}>{0}</a>""".format(file)
-        doc = doc + """
-    </pre><hr></body>
-</html>
-        """
-        index_file = Path(root + "/index.html")
-        ##if not index_file.exists():
-        ##   index_file.parent.mkdir(parents=True)
-        with open(index_file, "w") as f:
-            f.write(doc)
-            f.close
 
 if __name__ == "__main__":
     builder()  # pylint: disable=no-value-for-parameter

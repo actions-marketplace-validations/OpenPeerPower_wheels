@@ -19,6 +19,7 @@ RUN apk add --no-cache --virtual .build-dependencies \
     && ./configure \
     && make "-j$(nproc)" \
     && make install \
+    && apk del .build-dependencies \
     && rm -rf /usr/src/patchelf
 
 # Install requirements
