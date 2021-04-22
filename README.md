@@ -6,7 +6,6 @@ $ python3 -m builder \
     --apk build-base \
     --index https://OpenPeerPower/whl-ix \
     --requirement requirements_all.txt \
-    --upload rsync \
     --remote user@server:/wheels
 ```
 

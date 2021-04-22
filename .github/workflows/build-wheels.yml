@@ -30,7 +30,5 @@ jobs:
         with:
           tag: ${{ matrix.python }}-alpine${{ matrix.alpine }}
           arch: ${{ matrix.arch }}
-          wheels-host: ${{ secrets.WHEELS_HOST }}
-          wheels-key: ${{ secrets.WHEELS_KEY }}
           apk: "build-base;libffi-dev;openssl-dev"
           requirements: "requirements_all.txt"

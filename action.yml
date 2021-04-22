@@ -46,15 +46,6 @@ inputs:
   audit:
     description: "Audit wheels"
     default: false
-  wheels-key:
-    description: "SSH keys for the wheels host"
-    required: true
-  wheels-host:
-    description: "wheels host URL"
-    required: true
-  wheels-user:
-    description: "User for wheels host"
-    default: "wheels"
   wheels-index:
     description: "The wheels index URL"
     default: "https://OpenPeerPower/whl-ix"
@@ -62,15 +53,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      run: |
-        if [[ "${{ inputs.test }}" =~ false|False ]]; then
-          mkdir -p .ssh
-          echo -e "-----BEGIN RSA PRIVATE KEY-----\n${{ inputs.wheels-key }}\n-----END RSA PRIVATE KEY-----" >> .ssh/id_rsa
-          ssh-keyscan -H ${{ inputs.wheels-host }} >> .ssh/known_hosts
-          chmod 600 .ssh/*
-        fi
-
     - shell: bash
       id: pull
       run: |
@@ -149,8 +131,6 @@ runs:
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
           --index "${{ inputs.wheels-index }}" \
-          --upload rsync \
-          --remote "${{ inputs.wheels-user }}@${{ inputs.wheels-host }}:/opt/wheels" \
           --arch "${{ inputs.arch }}" \
           --tag "${{ inputs.tag }}" \
           ${{ steps.options.outputs.build }}
