@@ -3,7 +3,7 @@ name: Wheels
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - requirements.txt
       - requirements_build.txt
@@ -26,7 +26,7 @@ jobs:
         run: cat requirements.txt requirements_build.txt > requirements_all.txt
 
       - name: Build wheels
-        uses: openpeerpower/wheels@master
+        uses: openpeerpower/wheels@main
         with:
           tag: ${{ matrix.python }}-alpine${{ matrix.alpine }}
           arch: ${{ matrix.arch }}
