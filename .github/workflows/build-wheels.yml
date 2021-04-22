@@ -26,7 +26,7 @@ jobs:
         run: cat requirements.txt requirements_build.txt > requirements_all.txt
 
       - name: Build wheels
-        uses: open-peer-power/wheels@master
+        uses: openpeerpower/wheels@master
         with:
           tag: ${{ matrix.python }}-alpine${{ matrix.alpine }}
           arch: ${{ matrix.arch }}
