@@ -30,7 +30,7 @@ from builder.pip import (
     install_pips,
     write_requirement,
 )
-from builder.utils import check_url
+
 from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwheel
 
 
@@ -256,11 +256,8 @@ def make_tree(path):
         """
         )
         index_file = Path(root + "/index.html")
-        ##if not index_file.exists():
-        ##   index_file.parent.mkdir(parents=True)
-        with open(index_file, "w") as f:
-            f.write(doc)
-            f.close
+        with open(index_file, "w") as fil_name:
+            fil_name.write(doc)
 
 
 if __name__ == "__main__":
