@@ -23,7 +23,9 @@ def create_wheels_index(base_index: str) -> str:
     return f"{base_index}/{alpine_version()}/{build_arch()}/"
 
 
-def check_available_binary(index_name: str, skip_binary: str, packages: List[str]) -> str:
+def check_available_binary(
+    index_name: str, skip_binary: str, packages: List[str]
+) -> str:
     """Check if binary exists and ignore this skip."""
     if skip_binary == ":none:":
         return skip_binary

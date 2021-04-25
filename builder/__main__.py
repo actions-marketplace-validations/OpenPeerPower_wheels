@@ -80,22 +80,25 @@ from builder.wheel import copy_wheels_from_cache, fix_wheels_name, run_auditwhee
 )
 @click.option(
     "--github-token",
-    required=True, type=str, help="GitHub token to use for pushing to the index repository."
+    required=True,
+    type=str,
+    help="GitHub token to use for pushing to the index repository.",
 )
 @click.option(
     "--index-name",
     required=True,
-    type=str, help="Index repository name on GitHub, e.g. \"openpeerpower/python-package-server/.\""
+    type=str,
+    help='Index repository name on GitHub, e.g. "openpeerpower/python-package-server/."',
 )
 @click.option(
     "--signature",
     required=True,
-    type=str, help="Git signature for the index repository, in the standard format Full Name <email@com>"
+    type=str,
+    help="Git signature for the index repository, in the standard format Full Name <email@com>",
 )
 @click.option(
     "--timeout", default=345, type=int, help="Max runtime for pip before abort."
 )
-
 def builder(
     apk: str,
     pip: str,
@@ -111,7 +114,7 @@ def builder(
     github_token: str,
     index_name: str,
     signature: str,
-    timeout: int
+    timeout: int,
 ):
     """Build wheels precompiled for Open Peer Power container."""
     install_apks(apk)
@@ -120,8 +123,14 @@ def builder(
     with TemporaryDirectory() as index_dir:
         output = Path(index_dir)
         shell = partial(secure_shell, github_token)
-        shell("git", "clone", "--branch=main", "--depth=1",
-              "https://%s@github.com/%s.git" % (github_token, index_name), index_dir)
+        shell(
+            "git",
+            "clone",
+            "--branch=main",
+            "--depth=1",
+            "https://%s@github.com/%s.git" % (github_token, index_name),
+            index_dir,
+        )
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
 
@@ -196,39 +205,63 @@ def builder(
             shell("git", "push", "origin", "main:main")
 
     sys.exit(exit_code)
+
+
 def secure_shell(github_token, *args):
-    ''' execute git commands in a sub process '''
-    print(" ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args]))
+    """ execute git commands in a sub process """
+    print(
+        " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
+    )
     subprocess.run(args, check=True)
 
+
 def make_tree(path):
-    ''' Recreate index,html files '''
+    """ Recreate index,html files """
     html1 = """<!DOCTYPE html>
 <html>
     """
     for root, dirs, files in os.walk(path):
         path = root.split(os.sep)
-        doc = html1 + """<head><title>Index of /{0}/</title></head>
+        doc = (
+            html1
+            + """<head><title>Index of /{0}/</title></head>
     <body bgcolor="white">
         <h1>Index of /{0}/</h1><pre><a href="../">../</a>
-        """.format(os.path.basename(root))
+        """.format(
+                os.path.basename(root)
+            )
+        )
         for dirname in dirs:
-            doc = doc + """
-            <a href={0}/>{0}/</a>""".format(dirname)
+            doc = (
+                doc
+                + """
+            <a href={0}/>{0}/</a>""".format(
+                    dirname
+                )
+            )
         for file in files:
             if file != "index.html":
-                doc = doc + """
-            <a href={0}>{0}</a>""".format(file)
-        doc = doc + """
+                doc = (
+                    doc
+                    + """
+            <a href={0}>{0}</a>""".format(
+                        file
+                    )
+                )
+        doc = (
+            doc
+            + """
     </pre><hr></body>
 </html>
         """
+        )
         index_file = Path(root + "/index.html")
         ##if not index_file.exists():
         ##   index_file.parent.mkdir(parents=True)
         with open(index_file, "w") as f:
             f.write(doc)
             f.close
+
 
 if __name__ == "__main__":
     builder()  # pylint: disable=no-value-for-parameter
