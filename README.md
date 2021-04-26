@@ -5,8 +5,7 @@
 $ python3 -m builder \
     --apk build-base \
     --index https://OpenPeerPower/whl-ix \
-    --requirement requirements_all.txt \
-    --remote user@server:/wheels
+    --requirement requirements_all.txt
 ```
 
 ## Supported file transfer
