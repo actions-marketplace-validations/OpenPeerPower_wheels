@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         python: ["3.7", "3.8", "3.9"]
-        alpine: ["3.11", "3.12", "3.13"]
+        alpine: ["3.12"]
         arch: ["aarch64", "armhf", "armv7", "amd64", "i386"]
 
     steps:
