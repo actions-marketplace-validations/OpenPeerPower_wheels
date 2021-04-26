@@ -5,8 +5,6 @@ import subprocess
 import sys
 from typing import Dict, Optional
 
-import requests
-
 
 def alpine_version() -> str:
     """Return alpine version for index server."""
