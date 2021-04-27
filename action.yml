@@ -131,8 +131,6 @@ runs:
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
           --index-name "${{ inputs.wheels-index }}" \
-          --arch "${{ inputs.arch }}" \
-          --tag "${{ inputs.tag }}" \
           ${{ steps.options.outputs.build }}
 
     - shell: bash
