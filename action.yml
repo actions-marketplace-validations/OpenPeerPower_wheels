@@ -136,14 +136,6 @@ runs:
           ${{ steps.options.outputs.build }}
 
     - shell: bash
-      run: |
-        echo "Copy repository and SSH files to the container"
-        docker cp "${{ steps.options.outputs.path }}/." "${{ inputs.name }}:/data"
-        if [[ "${{ inputs.test }}" =~ false|False ]]; then
-          docker cp -a .ssh/ "${{ inputs.name }}:/root/.ssh"
-        fi
-
-    - shell: bash
       id: build
       run: |
         set +e
