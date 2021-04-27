@@ -130,7 +130,7 @@ runs:
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
-          --index "${{ inputs.wheels-index }}" \
+          --index-name "${{ inputs.wheels-index }}" \
           --arch "${{ inputs.arch }}" \
           --tag "${{ inputs.tag }}" \
           ${{ steps.options.outputs.build }}
