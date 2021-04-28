@@ -20,7 +20,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Prepare requirements
-        run: cat requirements.txt requirements_build.txt > requirements_all.txt
+        run: |
+          cat requirements.txt requirements_build.txt > requirements_all.txt
+          if test -f requirements.txt; then
+            echo "requirements.txt;exists."
+          fi
+          if test -f requirements_all.txt; then
+            echo "requirements_all.txt;exists."
+          fi
 
       - name: Build wheels
         uses: openpeerpower/wheels@main
