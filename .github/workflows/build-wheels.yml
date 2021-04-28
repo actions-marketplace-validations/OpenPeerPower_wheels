@@ -1,6 +1,12 @@
 name: Wheels
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - requirements.txt
+      - requirements_build.txt
 
 jobs:
   build:
