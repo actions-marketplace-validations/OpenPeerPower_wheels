@@ -124,6 +124,7 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
+        ls -al
         docker create --name "${{ inputs.name }}" -t \
           --workdir /data \
           ${{ steps.options.outputs.docker }} \
