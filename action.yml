@@ -127,7 +127,7 @@ runs:
         echo "::set-output name=path::$data_path"
         ls -al
         docker create --name "${{ inputs.name }}" -t \
-          --workdir . \
+          --workdir /. \
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
