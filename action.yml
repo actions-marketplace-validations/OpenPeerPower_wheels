@@ -124,9 +124,10 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
+        echo "::set-output name=path::$data_path"
         ls -al
         docker create --name "${{ inputs.name }}" -t \
-          --workdir /data \
+          --workdir . \
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
