@@ -123,6 +123,7 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
+        ls -al /home/runner/work/wheels/wheels
         docker create --name "${{ inputs.name }}" -t \
           --workdir /home/runner/work/wheels/wheels \
           ${{ steps.options.outputs.docker }} \
