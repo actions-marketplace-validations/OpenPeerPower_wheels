@@ -72,7 +72,7 @@ runs:
         else
           data_path="${{ github.workspace }}"
         fi
-
+        echo "data_path  : ${{ data_path }}"
         # Environment
         if [[ "${{ inputs.env-file  }}" =~ true|True ]] && [ -f .env_file ]; then
           docker+=("--env-file .env_file")
@@ -126,7 +126,6 @@ runs:
         echo "Create container"
         echo "inputs.path : ${{ inputs.path }}"
         echo "github.action_path  : ${{ github.action_path }}"
-        echo "data_path  : ${{ data_path }}"
         ls -al
         docker create --name "${{ inputs.name }}" -t \
           --workdir /data \
