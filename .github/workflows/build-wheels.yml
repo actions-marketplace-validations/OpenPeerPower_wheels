@@ -22,7 +22,6 @@ jobs:
       - shell: bash
         id: options
         run: |
-          echo "GITHUB_WORKSPACE : $GITHUB_WORKSPACE" \
           ls -al /home/runner/work/wheels/wheels
 
       - name: Prepare requirements
