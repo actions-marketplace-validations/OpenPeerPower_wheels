@@ -72,7 +72,6 @@ runs:
         else
           data_path="${{ github.workspace }}"
         fi
-        echo "data_path  : ${{ data_path }}"
         # Environment
         if [[ "${{ inputs.env-file  }}" =~ true|True ]] && [ -f .env_file ]; then
           docker+=("--env-file .env_file")
