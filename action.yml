@@ -123,9 +123,10 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
+        ech0 "check: ${{ steps.options.outputs.docker }}"
         ls -al /home/runner/work/wheels/wheels
         docker create --name "${{ inputs.name }}" -t \
-          --workdir /home/runner/work/wheels/wheels \
+          --workdir /data \
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
