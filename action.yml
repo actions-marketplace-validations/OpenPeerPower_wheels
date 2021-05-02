@@ -124,8 +124,6 @@ runs:
       run: |
         echo "Create container"
         echo "inputs.path : ${{ inputs.path }}"
-        echo "github.action_path  : ${{ github.action_path }}"
-        echo "GITHUB_WORKSPACE : ${{ GITHUB_WORKSPACE}}"
         
         ls -al
         docker create --name "${{ inputs.name }}" -t \

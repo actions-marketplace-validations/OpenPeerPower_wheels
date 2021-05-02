@@ -19,6 +19,12 @@ jobs:
       - name: Check out code from GitHub
         uses: actions/checkout@v2
 
+      - shell: bash
+      run: |
+        echo "Create container"
+        echo "inputs.path : ${{ inputs.path }}"
+        echo "GITHUB_WORKSPACE : $GITHUB_WORKSPACE"
+
       - name: Prepare requirements
         run: cat requirements.txt requirements_build.txt > requirements_all.txt
 
