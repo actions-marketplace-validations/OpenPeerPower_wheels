@@ -124,7 +124,7 @@ runs:
       run: |
         echo "Create container"
         docker create --name "${{ inputs.name }}" -t \
-          --workdir /data \
+          --workdir /home/runner/work/wheels/wheels \
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
