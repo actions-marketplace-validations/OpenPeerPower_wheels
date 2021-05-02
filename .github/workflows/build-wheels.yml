@@ -20,8 +20,9 @@ jobs:
         uses: actions/checkout@v2
 
       - shell: bash
-        id: kafoops
-        run: echo "GITHUB_WORKSPACE : $GITHUB_WORKSPACE"
+        id: options
+        run: |
+          echo "GITHUB_WORKSPACE : $GITHUB_WORKSPACE"
 
       - name: Prepare requirements
         run: cat requirements.txt requirements_build.txt > requirements_all.txt
