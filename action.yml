@@ -124,7 +124,9 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
-        echo "inputs.name : ${{ inputs.name }}" 
+        echo "inputs.path : ${{ inputs.path }}"
+        echo "github.action_path  : ${{ github.action_path }}"
+        echo "data_path  : ${{ data_path }}"
         ls -al
         docker create --name "${{ inputs.name }}" -t \
           --workdir /data \
