@@ -123,6 +123,7 @@ def builder(
     with TemporaryDirectory() as index_dir:
         output = Path(index_dir)
         shell = partial(secure_shell, github_token)
+        print("before clone")
         shell(
             "git",
             "clone",
