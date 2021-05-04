@@ -124,7 +124,6 @@ runs:
       run: |
         echo "Create container"
         echo "steps.options.outputs.build : ${{ steps.options.outputs.build }}"
-        ls -al /home/runner/work/wheels/wheels
         docker create --name "${{ inputs.name }}" -t \
           --workdir /data \
           ${{ steps.options.outputs.docker }} \
