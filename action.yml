@@ -129,7 +129,7 @@ runs:
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
-          --signature "${{ secrets.GITHUB_TOKEN }}" \
+          --signature "${{ secrets.SIGNATURE }}" \
           --github-token "${{ secrets.GITHUB_TOKEN }}" \          
           --index-name "${{ inputs.wheels-index }}" \
           ${{ steps.options.outputs.build }}
