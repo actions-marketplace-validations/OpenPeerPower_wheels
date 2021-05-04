@@ -128,8 +128,10 @@ runs:
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
-          --pip "${{ inputs.pip }}" \   
+          --pip "${{ inputs.pip }}" \
+          --github-token "${{ inputs.github-token }}" \
           --index-name "${{ inputs.wheels-index }}" \
+          --signature "${{ inputs.signature }}" \
           ${{ steps.options.outputs.build }}
 
     - shell: bash
