@@ -132,6 +132,7 @@ def builder(
             "https://%s@github.com/%s.git" % (github_token, index_name),
             index_dir,
         )
+        print("after clone")
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
 
