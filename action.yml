@@ -130,7 +130,7 @@ runs:
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
           --signature "" \
-          --github-token "${{ secrets.GITHUB_TOKEN }}" \          
+          --github-token ${{ secrets.GITHUB_TOKEN }} \          
           --index-name "${{ inputs.wheels-index }}" \
           ${{ steps.options.outputs.build }}
 
