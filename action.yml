@@ -135,6 +135,11 @@ runs:
           ${{ steps.options.outputs.build }}
 
     - shell: bash
+      run: |
+        echo "Copy repository to the container"
+        docker cp "${{ steps.options.outputs.path }}/." "${{ inputs.name }}:/data"
+        
+    - shell: bash
       id: build
       run: |
         set +e
