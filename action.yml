@@ -52,7 +52,10 @@ inputs:
   wheels-index:
     description: "The wheels index URL"
     default: "https://OpenPeerPower/whl-ix"
-
+  signature:
+    description: "github email signature"
+    default: false
+    
 
 runs:
   using: "composite"
