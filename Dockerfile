@@ -8,6 +8,7 @@ WORKDIR /usr/src
 
 # Install elf
 ARG PATCHELF_VERSION=0.11
+RUN apk update
 RUN apk add --no-cache --virtual .build-dependencies \
         build-base \
         git \

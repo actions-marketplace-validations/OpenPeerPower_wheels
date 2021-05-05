@@ -123,7 +123,6 @@ def builder(
     with TemporaryDirectory() as index_dir:
         output = Path(index_dir)
         shell = partial(secure_shell, github_token)
-        print("before clone")
         shell(
             "git",
             "clone",
@@ -210,8 +209,6 @@ def builder(
 
 def secure_shell(github_token, *args):
     """ execute git commands in a sub process """
-    print("Github token", github_token)
-    print("args", args)
     print(
         " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
     )
