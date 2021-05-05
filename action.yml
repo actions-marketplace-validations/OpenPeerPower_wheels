@@ -46,9 +46,13 @@ inputs:
   audit:
     description: "Audit wheels"
     default: false
+  github-token:
+    description: "github access token"
+    default: false
   wheels-index:
     description: "The wheels index URL"
     default: "https://OpenPeerPower/whl-ix"
+
 
 runs:
   using: "composite"
