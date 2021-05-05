@@ -212,7 +212,7 @@ def secure_shell(github_token, *args):
     print(
         " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
     )
-    subprocess.run(args, check=True)
+    subprocess.run(args, cwd="/usr/src", check=True)
 
 
 def make_tree(path):
