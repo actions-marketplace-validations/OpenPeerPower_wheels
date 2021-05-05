@@ -132,7 +132,6 @@ def builder(
             "https://%s@github.com/%s.git" % (github_token, index_name),
             index_dir,
         )
-        print("after clone")
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
 
@@ -211,6 +210,7 @@ def builder(
 
 def secure_shell(github_token, *args):
     """ execute git commands in a sub process """
+    print("Github token", github_token)
     print(
         " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
     )
