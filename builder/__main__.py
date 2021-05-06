@@ -130,6 +130,7 @@ def builder(
             "--depth=1",
             "https://%s@github.com/%s.git" % (github_token, index_name),
             index_dir,
+            cwd=index_dir
         )
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
@@ -212,7 +213,7 @@ def secure_shell(github_token, *args):
     print(
         " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
     )
-    subprocess.run(args, cwd="/usr/src", check=True)
+    subprocess.run(args, check=True)
 
 
 def make_tree(path):
