@@ -129,8 +129,7 @@ def builder(
             "--branch=main",
             "--depth=1",
             "https://%s@github.com/%s.git" % (github_token, index_name),
-            index_dir,
-            cwd=index_dir
+            index_dir
         )
         wheels_dir = create_wheels_folder(output)
         wheels_index = create_wheels_index("https://github.com/" + index_name + ".git")
@@ -211,7 +210,7 @@ def builder(
 def secure_shell(github_token, *args):
     """ execute git commands in a sub process """
     print(
-        " ".join([re.sub(r"%s" % github_token, "<GITHUB_TOKEN>", arg) for arg in args])
+        " ".join([re.sub(r"%s" % github_token, "<GIT_TOKEN>", arg) for arg in args])
     )
     subprocess.run(args, check=True)
 
