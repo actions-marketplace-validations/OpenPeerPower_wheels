@@ -32,7 +32,7 @@ jobs:
         with:
           tag: ${{ matrix.python }}-alpine${{ matrix.alpine }}
           arch: ${{ matrix.arch }}
-          github-token: ${{ secrets.GITHB_TOKEN }}
+          github-token: ${{ secrets.GITH_TOKEN }}
           signature: ${{ secrets.GIT_EMAIL }}
           apk: "build-base;libffi-dev;openssl-dev"
           requirements: "requirements_all.txt"
