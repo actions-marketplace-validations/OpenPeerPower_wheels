@@ -131,14 +131,13 @@ runs:
       run: |
         echo "Create container"
         docker create --name "${{ inputs.name }}" -t \
-          --workdir /data \
           ${{ steps.options.outputs.docker }} \
           "wheels-builder" \
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
+          --signature "${{ inputs.signature }}" \          
           --github-token "${{ inputs.github-token }}" \
           --index-name "${{ inputs.wheels-index }}" \
-          --signature "${{ inputs.signature }}" \
           ${{ steps.options.outputs.build }}
 
     - shell: bash
