@@ -30,8 +30,8 @@ jobs:
       - name: Build wheels
         uses: openpeerpower/wheels@main
         with:
-          tag: ${{ matrix.python }}-alpine${{ matrix.alpine }}
-          arch: ${{ matrix.arch }}
+          jobName: "Wheels_38_Alpine312"
+          builderVersion: "1.0.2-3.8-alpine3.12"
           github-token: ${{ secrets.GH_TOKEN }}
           signature: ${{ secrets.GIT_EMAIL }}
           apk: "build-base;libffi-dev;openssl-dev"
