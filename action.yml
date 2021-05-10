@@ -1,6 +1,9 @@
 name: "Open Peer Power wheels builder"
 description: "Builds and publishes python wheels"
 inputs:
+  container_id:
+    description: "The builder container name"
+    default: ""
   builderVersion:
     description: "The version of builder required"
     default: ""
@@ -91,7 +94,7 @@ runs:
       run: |
         declare -a build
         declare -a docker
-        container_id="${{ inputs.name }}-${{ github.run_id }}-${{ github.run_number }}-${{ inputs.arch }}"
+        echo ::set-output name=container_id::"${{ inputs.name }}-${{ github.run_id }}-${{ github.run_number }}-${{ inputs.arch }}"
         # Data Path
         if [ -n "${{ inputs.path }}" ]; then
           data_path="${{ github.workspace }}/${{ inputs.path }}"
