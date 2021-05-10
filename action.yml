@@ -140,7 +140,7 @@ runs:
     - shell: bash
       run: |
         echo "Create container"
-        docker create --name "${{ container_id }}" -t \
+        docker create --name "${{ inputs.container_id }}" -t \
           ${{ steps.options.outputs.docker }} \
           openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }} \
           --apk "${{ inputs.apk }}" \
@@ -172,5 +172,5 @@ runs:
 
     - shell: bash
       run: |
-        docker rm -f "${{ container_id }}"
+        docker rm -f "${{ inputs.container_id }}"
         exit ${{ steps.build.outputs.return_val }}
