@@ -78,6 +78,7 @@ runs:
     - shell: bash
       run: |
         echo "Install Wheels Builder"
+        echo "openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }}"
         docker pull openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }}
 
     - shell: bash
