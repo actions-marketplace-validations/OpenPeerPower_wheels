@@ -66,28 +66,20 @@ runs:
     - shell: bash
       run: |
         echo "Initial Cross Build"
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            qemu-user-static \
-            binfmt-support \
-            curl \
-            jq
-          sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-          sudo update-binfmts --enable qemu-arm
-          sudo update-binfmts --enable qemu-aarch64
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          qemu-user-static \
+          binfmt-support \
+          curl \
+          jq
+        sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        sudo update-binfmts --enable qemu-arm
+        sudo update-binfmts --enable qemu-aarch64
 
     - shell: bash
       run: |
-        echo "Wheels Builder"
+        echo "Install Wheels Builder"
         docker pull openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }}
-
-    - shell: bash
-      id: pull
-      run: |
-        name="openpeerpower/${{ inputs.arch }}-base-python:${{ inputs.tag }}"
-        docker pull "$name"
-        echo "::set-output name=name::$name"
 
     - shell: bash
       id: options
