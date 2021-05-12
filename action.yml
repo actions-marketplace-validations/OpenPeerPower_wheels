@@ -1,12 +1,9 @@
 name: "Open Peer Power wheels builder"
 description: "Builds and publishes python wheels"
 inputs:
-  container_id:
-    description: "The builder container name"
-    default: ""
-  builderVersion:
-    description: "The version of builder required"
-    default: ""
+  tag:
+    description: "The tag for the builder that should be used"
+    default: "dev"
   arch:
     description: "Build architecture"
     required: true
@@ -59,33 +56,23 @@ inputs:
     description: "github email signature"
     default: false
 
+
 runs:
   using: "composite"
   steps:
-
     - shell: bash
+      id: pull
       run: |
-        echo "Initial Cross Build"
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          qemu-user-static \
-          binfmt-support \
-          curl \
-          jq
-        sudo update-binfmts --enable qemu-arm
-        sudo update-binfmts --enable qemu-aarch64
-
-    - shell: bash
-      run: |
-        echo "Install Wheels Builder"
-        docker pull openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }}
+        name="openpeerpower/${{ inputs.arch }}-base-python:${{ inputs.tag }}"
+        docker pull "$name"
+        echo "::set-output name=name::$name"
 
     - shell: bash
       id: options
       run: |
         declare -a build
         declare -a docker
-        echo ::set-output name=container_id::"${{ inputs.name }}-${{ github.run_id }}-${{ github.run_number }}-${{ inputs.arch }}"
+
         # Data Path
         if [ -n "${{ inputs.path }}" ]; then
           data_path="${{ github.workspace }}/${{ inputs.path }}"
@@ -130,14 +117,28 @@ runs:
 
     - shell: bash
       run: |
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+    - shell: bash
+      run: |
+        echo "Build image"
+        docker build ${{ github.action_path }} \
+          -t wheels-builder \
+          --build-arg BUILD_FROM=${{ steps.pull.outputs.name }} \
+          --build-arg BUILD_ARCH=${{ inputs.arch }}
+
+    - shell: bash
+      run: |
         echo "Create container"
-        docker create --name "${{ inputs.container_id }}" -t \
+        docker create --name "${{ inputs.name }}" -t \
           ${{ steps.options.outputs.docker }} \
-          openpeerpower/${{ inputs.arch }}-wheels:${{ inputs.builderVersion }} \
+          "wheels-builder" \
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
           --signature "${{ inputs.signature }}" \          
-          --github-token "${{ inputs.github-token }}" \      
+          --github-token "${{ inputs.github-token }}" \
+          --arch "${{ inputs.arch }}" \
+          --tag "${{ inputs.tag }}" \          
           --index-name "${{ inputs.wheels-index }}" \
           ${{ steps.options.outputs.build }}
 
@@ -163,5 +164,5 @@ runs:
 
     - shell: bash
       run: |
-        docker rm -f "${{ inputs.container_id }}"
+        docker rm -f "${{ inputs.name }}"
         exit ${{ steps.build.outputs.return_val }}
