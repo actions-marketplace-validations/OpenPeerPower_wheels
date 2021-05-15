@@ -34,5 +34,5 @@ jobs:
           arch: ${{ matrix.arch }}
           github-token: ${{ secrets.GH_TOKEN }}
           signature: ${{ secrets.GIT_EMAIL }}
-          apk: "build-base;libffi-dev;openssl-dev"
+          apk: "build-base;libffi-dev;openssl-dev;git"
           requirements: "requirements_all.txt"
