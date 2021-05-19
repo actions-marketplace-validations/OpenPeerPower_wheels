@@ -56,7 +56,6 @@ inputs:
     description: "github email signature"
     default: false
 
-
 runs:
   using: "composite"
   steps:
@@ -136,7 +135,7 @@ runs:
           --apk "${{ inputs.apk }}" \
           --pip "${{ inputs.pip }}" \
           --signature "${{ inputs.signature }}" \          
-          --github-token "${{ inputs.github-token }}" \
+          --github-tiken "${{ inputs.github-token }}" \
           --arch "${{ inputs.arch }}" \
           --tag "${{ inputs.tag }}" \          
           --index-name "${{ inputs.wheels-index }}" \
@@ -146,7 +145,7 @@ runs:
       run: |
         echo "Copy repository to the container"
         docker cp "${{ steps.options.outputs.path }}/." "${{ inputs.name }}:/data"
-        
+
     - shell: bash
       id: build
       run: |
