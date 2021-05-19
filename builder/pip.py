@@ -15,7 +15,6 @@ def build_wheels_package(
     constraint: Optional[Path] = None,
 ) -> None:
     """Build wheels from a requirements file into output."""
-    print("Start build_wheels_package")
     cpu = os.cpu_count() or 4
 
     # Modify speed
@@ -24,7 +23,6 @@ def build_wheels_package(
 
     # Add constraint
     constraint_cmd = f"--constraint {constraint}" if constraint else ""
-    print("In build wheels package")
 
     run_command(
         f'pip3 wheel --progress-bar off --no-clean --no-binary "{skip_binary}" --wheel-dir {output} --find-links {index} {constraint_cmd} "{package}"',
@@ -42,7 +40,6 @@ def build_wheels_requirement(
     constraint: Optional[Path] = None,
 ) -> None:
     """Build wheels from a requirements file into output."""
-    print("Start build_wheels_requirement")
     cpu = os.cpu_count() or 4
 
     # Modify speed
@@ -61,7 +58,6 @@ def build_wheels_requirement(
 
 def build_wheels_local(index: str, output: Path) -> None:
     """Build wheels from a requirements file into output."""
-    print("Start build_wheels_local")
     cpu = os.cpu_count() or 4
 
     # Modify speed
@@ -76,7 +72,6 @@ def build_wheels_local(index: str, output: Path) -> None:
 
 def parse_requirements(requirement: Path) -> List[str]:
     """Parse a requirement files into an array."""
-    print("Start parse_requirements")
     requirement_list = set()
     with requirement.open("r") as data:
         for line in data:
@@ -100,7 +95,6 @@ def extract_packages(
     requirement: Path, requirement_diff: Optional[Path] = None
 ) -> List[str]:
     """Extract packages they need build."""
-    print("Start extract_packages")
     packages = parse_requirements(requirement)
 
     # Without diff
@@ -114,13 +108,11 @@ def extract_packages(
 
 def write_requirement(requirement: Path, packages: List[str]) -> None:
     """Write packages list to a requirement file."""
-    print("Start write_requirement")
     requirement.write_text("\n".join(packages))
 
 
 def install_pips(index: str, pips: str) -> None:
     """Install all pipy string formated as 'package1;package2'."""
-    print("Start install_pips(")
     packages = " ".join(pips.split(";"))
 
     run_command(

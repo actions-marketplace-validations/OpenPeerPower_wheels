@@ -117,7 +117,6 @@ def builder(
     timeout: int,
 ):
     """Build wheels precompiled for Open Peer Power container."""
-    print("Start builder")
     install_apks(apk)
 
     exit_code = 0
@@ -210,14 +209,12 @@ def builder(
 
 def secure_shell(github_token, *args):
     """ execute git commands in a sub process """
-    print("Start secure_shell")
     print(" ".join([re.sub(r"%s" % github_token, "<GIT_TOKEN>", arg) for arg in args]))
     subprocess.run(args, check=True)
 
 
 def make_tree(path):
     """ Recreate index,html files """
-    print("Start make_tree")
     html1 = """<!DOCTYPE html>
 <html>
     """
