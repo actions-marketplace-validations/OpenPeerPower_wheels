@@ -136,6 +136,8 @@ runs:
           --pip "${{ inputs.pip }}" \
           --signature "${{ inputs.signature }}" \
           --github-token "${{ inputs.github-token }}" \
+          --arch "${{ inputs.arch }}" \
+          --tag "${{ inputs.tag }}" \
           --index-name "${{ inputs.wheels-index }}" \
           ${{ steps.options.outputs.build }}
 
