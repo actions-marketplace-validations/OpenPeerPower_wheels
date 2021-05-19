@@ -8,6 +8,7 @@ from typing import Dict, Optional
 
 def alpine_version() -> str:
     """Return alpine version for index server."""
+    print("Start alpine_version")
     version = Path("/etc/alpine-release").read_text().split(".")
 
     return f"alpine-{version[0]}.{version[1]}"
@@ -15,6 +16,7 @@ def alpine_version() -> str:
 
 def build_arch() -> str:
     """Return build arch for wheels."""
+    print("Start build_arch")
     return os.environ["ARCH"]
 
 
@@ -22,6 +24,7 @@ def run_command(
     cmd: str, env: Optional[Dict[str, str]] = None, timeout: Optional[int] = None
 ) -> None:
     """Implement subprocess.run but handle timeout different."""
+    print("Start run_command")
     subprocess.run(
         cmd,
         shell=True,

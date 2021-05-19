@@ -20,6 +20,7 @@ ARCH_PLAT = {
 
 def fix_wheels_name(wheels_folder: Path) -> None:
     """Remove platform tag from filename."""
+    print("Start fix_wheels_name")
     for package in wheels_folder.glob("*.whl"):
         match = RE_WHEEL_PLATFORM.match(package.name)
         if not match:
@@ -29,6 +30,7 @@ def fix_wheels_name(wheels_folder: Path) -> None:
 
 def copy_wheels_from_cache(cache_folder: Path, wheels_folder: Path) -> None:
     """Preserve wheels from cache on timeout error."""
+    print("Start copy_wheels_from_cache")
     for wheel_file in cache_folder.glob("**/*.whl"):
         with suppress(OSError):
             shutil.copy(wheel_file, wheels_folder)
@@ -36,6 +38,7 @@ def copy_wheels_from_cache(cache_folder: Path, wheels_folder: Path) -> None:
 
 def run_auditwheel(wheels_folder: Path) -> None:
     """Run auditwheel to include shared library."""
+    print("Start run_auditwheel")
     platform = ARCH_PLAT[build_arch()]
 
     for wheel_file in wheels_folder.glob("*.whl"):

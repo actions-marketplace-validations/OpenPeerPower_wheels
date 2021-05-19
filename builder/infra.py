@@ -12,6 +12,7 @@ _RE_REQUIREMENT = re.compile(r"(?P<package>.+)(?:==|>|<|<=|>=|~=)(?P<version>.+)
 
 def create_wheels_folder(base_folder: Path) -> Path:
     """Create index structure."""
+    print("Start Create_wheels_folder")
     wheels_dir = Path(base_folder, "docs", alpine_version(), build_arch())
 
     wheels_dir.mkdir(parents=True, exist_ok=True)
@@ -20,6 +21,7 @@ def create_wheels_folder(base_folder: Path) -> Path:
 
 def create_wheels_index(base_index: str) -> str:
     """Create wheels specific URL."""
+    print("Start Create_wheels_index")
     return f"{base_index}/{alpine_version()}/{build_arch()}/"
 
 
@@ -27,6 +29,7 @@ def check_available_binary(
     index_name: str, skip_binary: str, packages: List[str]
 ) -> str:
     """Check if binary exists and ignore this skip."""
+    print("Start check_available_binary")
     if skip_binary == ":none:":
         return skip_binary
 
