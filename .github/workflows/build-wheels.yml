@@ -1,6 +1,7 @@
 name: Wheels
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,6 +11,7 @@ jobs:
     name: Build ${{ matrix.arch }}-python${{ matrix.python }}-alpine${{ matrix.alpine }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python: ["3.8"]
         alpine: ["3.12"]
@@ -17,12 +19,7 @@ jobs:
 
     steps:
       - name: Check out code from GitHub
-        uses: actions/checkout@v2
-
-      - shell: bash
-        id: options
-        run: |
-          ls -al /home/runner/work/wheels/wheels
+        uses: actions/checkout@v2.3.4
 
       - name: Prepare requirements
         run: cat requirements.txt requirements_build.txt > requirements_all.txt
